@@ -1,0 +1,11 @@
+.profile-image{
+    width: 95%;
+    border-radius: 2em;
+    box-shadow: 2px 5px gray;
+    margin: auto;
+}
+
+section{
+    background-color: #F0F0F0;
+}
+
