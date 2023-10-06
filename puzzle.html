@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Puzzle Game</title>
+<link rel="stylesheet" href="puzzle.css">
+</head>
+<body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <div id="puzzleWrapper">
+
+        <header>
+
+            <div class="headerTitle">Picture Puzzle</div>
+
+        </header>
+
+        <section>
+
+            <div class="contentWrapper">
+
+                <div class="puzzleSection">
+
+                    <div id="image"></div>
+
+                    <a href="#" id="start">Click to start</a>
+
+                </div>
+
+                <div class="countSection">
+
+                    <div >Moves made<br><span id="counter">0</span></div>
+
+                    <div id="clock">Time elapsed<br>
+
+                        <div id="countdown">05:00</div>
+
+                    </div>
+
+                </div>
+
+                <div class="previewSection">
+
+                    <div id="image"></div>
+
+                    <div class="previewTitle">Preview</div>
+
+                </div>
+
+            </div>
+
+        </section>
+        <section>
+            <div class="win" style="display:none">
+                <center><h1>Yayyy!!! You Win</h1></center>
+            </div>
+        </section>
+        <section>
+
+            <div class="imgChoice">
+
+                <div class="selectTitle">select an image of your choice</div>
+
+                <div class="imgSelectionWrapper">
+
+                    <div class="img1"></div>
+
+                    <div class="img2"></div>
+
+                    <div class="img3"></div>
+
+                    <div class="img4"></div>
+
+                </div>
+
+
+
+            </div>
+
+        </section>
+
+        <section>
+
+            <div class="lbWrapper">
+
+                <div class="failWrapper">
+
+                    <div class="failTilte">Sorry !!! Better luck next time</div>
+
+                    <div class="tryAgain"><a href="#">click here to try once more.</a></div>
+
+                </div>
+
+                <div class="successWrapper">
+
+                    <div class="successTilte">Congrats !!!</div>
+
+                    <div class="successMsg"></div>
+
+                    <div class="tryAgain"><a href="#">click here to try once more.</a></div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js" type="text/javascript"></script>
+    <script src="puzzle.js"></script>
+
+</body>
+</html>
