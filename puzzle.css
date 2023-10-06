@@ -6,7 +6,14 @@ body {
     font-weight: 600;
     background: #FDF3E7;
 }
-
+.puzzle{
+    width: 100%;
+    margin: 0 0;
+}
+.img{
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
 div#puzzleWrapper {
     max-width: 1200px;
     margin: 0 auto;
@@ -57,9 +64,11 @@ footer {
 }
 
 #image {
-    width: 400px;
     height: 400px;
-    background-image: url(./img2.jpeg);
+    width: 400px;
+    max-width: 97%;
+    margin: auto;
+    background-image: url(./images/img1.jpg);
     position: relative;
 }
 
@@ -74,7 +83,7 @@ footer {
 .imgSelectionWrapper .img1 {
     width: 200px;
     height: 200px;
-    background-image: url(./img1.jpg);
+    background-image: url(./images/img1.jpg);
     background-size: contain;
     cursor: pointer;
 }
@@ -82,7 +91,7 @@ footer {
 .imgSelectionWrapper .img2 {
     width: 200px;
     height: 200px;
-    background-image: url(./img2.jpeg);
+    background-image: url(./images/img2.jpg);
     background-size: contain;
     cursor: pointer;
 }
@@ -90,7 +99,7 @@ footer {
 .imgSelectionWrapper .img3 {
     width: 200px;
     height: 200px;
-    background-image: url(./img3.jpg);
+    background-image: url(./images/img3.jpg);
     background-size: contain;
     cursor: pointer;
 }
@@ -98,7 +107,7 @@ footer {
 .imgSelectionWrapper .img4 {
     width: 200px;
     height: 200px;
-    background-image: url(./img4.jpg);
+    background-image: url(./images/img4.jpg);
     background-size: contain;
     cursor: pointer;
 }
@@ -370,8 +379,9 @@ input.submit {
     }
     div#image {
         display: inline-block;
-        width: 300px;
-        height: 300px;
+        width: 95%;
+        padding-top: 100%;
+        max-width: 97%;
         background-size: contain;
     }
     .contentWrapper {
@@ -383,23 +393,27 @@ input.submit {
     input.submit {
         margin-top: 15px;
     }
+    .img{
+        width: 100%;
+        margin: 0 0;
+    }
     #image {
-        background-image: url(./img2.jpeg);
+        background-image: url(./images/img1.jpg);
     }
     .imgSelectionWrapper .img1 {
-        background-image: url(./img1.jpg);
+        background-image: url(./images/img1.jpg);
     }
     .imgSelectionWrapper .img2 {
-        background-image: url(./img2.jpeg);
+        background-image: url(./images/img2.jpg);
     }
     .imgSelectionWrapper .img3 {
-        background-image: url(./img3.jpg);
+        background-image: url(./images/img3.jpg);
     }
     .imgSelectionWrapper .img4 {
-        background-image: url(./img4.jpg);
+        background-image: url(./images/img4.jpg);
     }
     #image div{
         width: 75px;
         height: 75px;
     }
-}
+} 

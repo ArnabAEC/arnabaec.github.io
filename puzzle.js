@@ -1,6 +1,8 @@
 $(document).ready(function () {
 
+    selected = "img1";
     imageSelect();
+
     win = false;
     game = false;
     $("#start").on("click", function () {
@@ -32,18 +34,12 @@ function startGame() {
     var arr = new Array(14, 2, 10, 6, 12, 13, 9, 7, 15, 8, 5, 11, 4, 1, 3, 16);
     var arrCmp = new Array(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16)
     arr = Shuffle(arr);
-
+    console.log(arr)
     for (i = 0; i < arr.length; i++) {
 
-        $("#image").append('<div id="pos' + (i + 1) + '" class="sq' + arr[i] + '" draggable="true"></div>');
+        $("#pos"+(i+1)).attr("src", "./images/"+selected+".jpg_"+arr[i]+".jpg");
 
     }
-
-    var bg = $(".puzzleSection #image").css('background-image').replace(/^url|[\(\)]/g, '');
-
-    $(".puzzleSection #image div").css('background-image', 'url(' + bg + ')');
-
-    $(".puzzleSection #image").css('background-image', 'none');
 
     $("#counter span").html("0");
 
@@ -62,8 +58,10 @@ function startGame() {
             temp = arr[im2-1];
             arr[im2-1] = arr[im-1];
             arr[im-1] = temp;
-            $("#pos" + im).removeClass().addClass('sq' + arr[im-1])
-            $("#pos"+ im2).removeClass().addClass('sq' + arr[im2-1])
+            srcim = $("#pos" + im).attr('src')
+            srcim2 = $("#pos"+ im2).attr('src')
+            $("#pos" + im).attr('src',srcim2)
+            $("#pos"+ im2).attr('src', srcim)
             moves++;
             $('#counter').html(moves)
             console.log(im2,im)
@@ -213,12 +211,11 @@ function imageSelect() {
 
     $(".imgSelectionWrapper div").on('click', function () {
 
-        var bg = $(this).css('background-image').replace(/^url|[\(\)]/g, '');
-
-        $(".puzzleSection #image").css('background-image', 'url(' + bg + ')');
-
-        $(".previewSection #image").css('background-image', 'url(' + bg + ')');
-
+        console.log(this)
+        selected = this.id;
+        console.log(selected)
+        $("#preview").attr('src', "./images/"+selected+".jpg");
+        startGame()
     });
 
 
