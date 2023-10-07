@@ -75,6 +75,7 @@ function startGame() {
             if(i==16){
                 win = true;
                 $('.win').show();
+                $('.counterbar').hide();
                 game = false;
             }
         }
@@ -209,11 +210,8 @@ function secondsToTime(secs) {
 
 function imageSelect() {
 
-    $(".imgSelectionWrapper div").on('click', function () {
-
-        console.log(this)
+    $(".selector").on('click', function () {
         selected = this.id;
-        console.log(selected)
         $("#preview").attr('src', "./images/"+selected+".jpg");
         startGame()
     });

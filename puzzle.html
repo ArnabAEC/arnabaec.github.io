@@ -22,85 +22,85 @@
 
             <div class="contentWrapper container">
                 <div class="row">
-                    <div class="col-sm-12 col-md-1  "></div>
-                    <div class="col-sm-12 col-md-4  ">
+                    <div class="col-sm-12 col-md-5  ">
                         <div  class="">
-                            <div class="puzzle row">
-                                <div class="img col-3"><img src="./images/img1.jpg_1.jpg" alt="" id="pos1" class="img"></div>
-                                <div class="img col-3"><img src="./images/img1.jpg_2.jpg" alt="" id="pos2" class="img"></div>
-                                <div class="img col-3"><img src="./images/img1.jpg_3.jpg" alt="" id="pos3" class="img"></div>
-                                <div class="img col-3"><img src="./images/img1.jpg_4.jpg" alt="" id="pos4" class="img"></div>
-                                <div class="img col-3"><img src="./images/img1.jpg_5.jpg" alt="" id="pos5" class="img"></div>
-                                <div class="img col-3"><img src="./images/img1.jpg_6.jpg" alt="" id="pos6" class="img"></div>
-                                <div class="img col-3"><img src="./images/img1.jpg_7.jpg" alt="" id="pos7" class="img"></div>
-                                <div class="img col-3"><img src="./images/img1.jpg_8.jpg" alt="" id="pos8" class="img"></div>
-                                <div class="img col-3"><img src="./images/img1.jpg_9.jpg" alt="" id="pos9" class="img"></div>
-                                <div class="img col-3"><img src="./images/img1.jpg_10.jpg" alt="" id="pos10" class="img"></div>
-                                <div class="img col-3"><img src="./images/img1.jpg_11.jpg" alt="" id="pos11" class="img"></div>
-                                <div class="img col-3"><img src="./images/img1.jpg_12.jpg" alt="" id="pos12" class="img"></div>
-                                <div class="img col-3"><img src="./images/img1.jpg_13.jpg" alt="" id="pos13" class="img"></div>
-                                <div class="img col-3"><img src="./images/img1.jpg_14.jpg" alt="" id="pos14" class="img"></div>
-                                <div class="img col-3"><img src="./images/img1.jpg_15.jpg" alt="" id="pos15" class="img"></div>
-                                <div class="img col-3"><img src="./images/img1.jpg_16.jpg" alt="" id="pos16" class="img"></div>
+                            <div class="puzzle container">
+                                <div class="row">
+                                    <div class="img col-3"><img src="./images/img1.jpg_1.jpg" alt="" id="pos1" class="img"></div>
+                                    <div class="img col-3"><img src="./images/img1.jpg_2.jpg" alt="" id="pos2" class="img"></div>
+                                    <div class="img col-3"><img src="./images/img1.jpg_3.jpg" alt="" id="pos3" class="img"></div>
+                                    <div class="img col-3"><img src="./images/img1.jpg_4.jpg" alt="" id="pos4" class="img"></div>
+                                </div>
+                                <div class="row">
+                                    <div class="img col-3"><img src="./images/img1.jpg_5.jpg" alt="" id="pos5" class="img"></div>
+                                    <div class="img col-3"><img src="./images/img1.jpg_6.jpg" alt="" id="pos6" class="img"></div>
+                                    <div class="img col-3"><img src="./images/img1.jpg_7.jpg" alt="" id="pos7" class="img"></div>
+                                    <div class="img col-3"><img src="./images/img1.jpg_8.jpg" alt="" id="pos8" class="img"></div>
+                                </div>
+                                <div class="row">
+                                    <div class="img col-3"><img src="./images/img1.jpg_9.jpg" alt="" id="pos9" class="img"></div>
+                                    <div class="img col-3"><img src="./images/img1.jpg_10.jpg" alt="" id="pos10" class="img"></div>
+                                    <div class="img col-3"><img src="./images/img1.jpg_11.jpg" alt="" id="pos11" class="img"></div>
+                                    <div class="img col-3"><img src="./images/img1.jpg_12.jpg" alt="" id="pos12" class="img"></div>
+                                </div>
+                                <div class="row">
+                                    <div class="img col-3"><img src="./images/img1.jpg_13.jpg" alt="" id="pos13" class="img"></div>
+                                    <div class="img col-3"><img src="./images/img1.jpg_14.jpg" alt="" id="pos14" class="img"></div>
+                                    <div class="img col-3"><img src="./images/img1.jpg_15.jpg" alt="" id="pos15" class="img"></div>
+                                    <div class="img col-3"><img src="./images/img1.jpg_16.jpg" alt="" id="pos16" class="img"></div>
+                                </div>
                             </div>
                         </div>
                         <a href="#" id="start">Click to start</a>
                     </div>
     
-                    <div class=" col-sm-12 col-md-2">
-    
-                        <div >Moves made<br><span id="counter">0</span></div>
-    
-                        <div id="clock">Time elapsed<br>
-    
-                            <div id="countdown">05:00</div>
-    
-                        </div>
-    
+                    <div class=" col-sm-12 col-md-2 count">
+                            <div class="counterbar">
+                                <center><div >Moves: <span id="counter">0</span></div></center>
+                                <center>
+                                    <div id="clock">Time elapsed<br>
+                                        <div id="countdown">05:00</div>
+                                    </div>  
+                                </center>
+                            </div>
+                            <div class="win" style="display:none">
+                                <center><h1 class="win">Yayyy!!! You Win</h1></center>
+                            </div>
+                    </div>    
+                    <div class=" col-sm-12 col-md-5">    
+                        <img src="./images/img1.jpg" alt="" id="preview" class="preview">    
                     </div>
-    
-                    <div class=" col-sm-12 col-md-4">
-    
-                        <img src="./images/img1.jpg" alt="" id="preview">
-    
-                    </div>
-                    <div class="col-md-1 col-sm-12"></div>
-
                 </div>
             </div>
 
-        </section>
-        <section>
-            <div class="win" style="display:none">
-                <center><h1>Yayyy!!! You Win</h1></center>
-            </div>
         </section>
         <section>
 
             <div class="imgChoice">
 
-                <div class="selectTitle">select an image of your choice</div>
+                <div class="selectTitle">select an image</div>
 
                 <div class="imgSelectionWrapper">
-
-                    <div class="img1" id="img1"></div>
-
-                    <div class="img2" id="img2"></div>
-
-                    <div class="img3" id="img3"></div>
-
-                    <div class="img4" id="img4"></div>
-
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-sm-12 col-md-3">
+                                <img src="./images/img1.jpg" alt="" class="selector preview" id="img1">
+                            </div>
+                            <div class="col-sm-12 col-md-3">
+                                <img src="./images/img2.jpg" alt="" class="selector preview" id="img2">
+                            </div>
+                            <div class="col-sm-12 col-md-3">
+                                <img src="./images/img3.jpg" alt="" class="selector preview" id="img3">
+                            </div>
+                            <div class="col-sm-12 col-md-3">
+                                <img src="./images/img4.jpg" alt="" class="selector preview" id="img4">
+                            </div>
+                        </div>
+                    </div>
                 </div>
-
-
-
             </div>
-
         </section>
-
         <section>
-
             <div class="lbWrapper">
 
                 <div class="failWrapper">
