@@ -5,10 +5,93 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Catch the Heart</title>
     <style>
-        /* Previous styles remain the same until stats section */
-        /* ... [Previous styles up to #stats] ... */
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: linear-gradient(to bottom, #ffcccc, #ffe6e6);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
-        #stats {
+        h1 {
+            margin: 20px 0;
+            color: #d63384;
+        }
+
+        #game-area {
+            position: relative;
+            background: #fff;
+            width: 90vw;
+            max-width: 400px;
+            height: 70vh;
+            max-height: 600px;
+            border: 2px solid #d63384;
+            border-radius: 10px;
+            overflow: hidden;
+            touch-action: none;
+        }
+
+        #basket {
+            position: absolute;
+            bottom: 5%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 30px;
+            background: transparent;
+            border: 4px solid #d63384;
+            border-radius: 0 0 50% 50%;
+            border-top: none;
+        }
+
+        #heart {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translate(-50%, 0);
+        }
+
+        .heart {
+            background-color: #ff4d4d;
+            display: inline-block;
+            height: 20px;
+            margin: 0 10px;
+            position: relative;
+            top: 0;
+            transform: rotate(-45deg);
+            width: 20px;
+        }
+
+        .heart:before,
+        .heart:after {
+            content: "";
+            background-color: #ff4d4d;
+            border-radius: 50%;
+            height: 20px;
+            position: absolute;
+            width: 20px;
+        }
+
+        .heart:before {
+            top: -10px;
+            left: 0;
+        }
+
+        .heart:after {
+            left: 10px;
+            top: 0;
+        }
+
+        #score, #lives, #level {
+            font-size: 20px;
+            color: #d63384;
+            margin: 10px 0;
+        }
+#stats {
             display: flex;
             justify-content: space-around;
             width: 90vw;
@@ -92,7 +175,72 @@
             width: 100%;
         }
 
-        /* Add other previous styles here */
+
+        #instructions {
+            color: #666;
+            margin: 10px 0;
+            font-size: 14px;
+        }
+
+        .celebration-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 32px;
+            color: #d63384;
+            font-weight: bold;
+            display: none;
+            z-index: 10;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .game-over {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            color: white;
+            z-index: 20;
+        }
+
+        .game-over button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 18px;
+            background: #d63384;
+            border: none;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .flower {
+            position: absolute;
+            font-size: 24px;
+            animation: fall 3s linear forwards;
+            z-index: 5;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-20px) rotate(0deg);
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+            }
+        }
+
+        #lives span {
+            color: red;
+            font-size: 24px;
+        }
     </style>
 </head>
 <body>
@@ -132,7 +280,15 @@
     </div>
 
     <script>
-        // Previous variables remain the same
+        const basket = document.getElementById('basket');
+        const heart = document.getElementById('heart');
+        const scoreDisplay = document.getElementById('score');
+        const livesDisplay = document.getElementById('lives').querySelector('span');
+        const levelDisplay = document.getElementById('level');
+        const gameArea = document.getElementById('game-area');
+        const celebrationText = document.querySelector('.celebration-text');
+        const gameOverScreen = document.querySelector('.game-over');
+        
         let score = 0;
         let lives = 3;
         let missedHearts = 0;
@@ -181,7 +337,124 @@
             }, 3000);
         }
 
-        // ... [Previous control functions remain the same] ...
+
+        function gameOver() {
+            isGameOver = true;
+            gameOverScreen.style.display = 'flex';
+            gameOverScreen.querySelector('.final-score').textContent = score;
+        }
+
+        function restartGame() {
+            score = 0;
+            lives = 10;
+            level = 1;
+            gameSpeed = 2;
+            isGameOver = false;
+            heartPosition = { x: 50, y: 0 };
+            basketPosition = 50;
+            updateLives();
+            scoreDisplay.textContent = `Score: ${score}`;
+            levelDisplay.textContent = `Level: ${level}`;
+            gameOverScreen.style.display = 'none';
+            heart.style.display = 'block';
+            updateHeart();
+        }
+
+        function createFlower() {
+            const flowers = ['🌸', '🌺', '🌹', '🌷', '💐', '🌻'];
+            const flower = document.createElement('div');
+            flower.className = 'flower';
+            flower.textContent = flowers[Math.floor(Math.random() * flowers.length)];
+            flower.style.left = Math.random() * 100 + '%';
+            document.body.appendChild(flower);
+            
+            setTimeout(() => {
+                flower.remove();
+            }, 3000);
+        }
+
+        function celebrate() {
+            celebrationText.style.display = 'block';
+            
+            for (let i = 0; i < 30; i++) {
+                setTimeout(() => {
+                    createFlower();
+                }, i * 100);
+            }
+
+            setTimeout(() => {
+                celebrationText.style.display = 'none';
+            }, 3000);
+        }
+
+        function updateBasketPosition(newPosition) {
+            basketPosition = Math.max(10, Math.min(90, newPosition));
+            basket.style.left = `${basketPosition}%`;
+        }
+
+        // Keyboard controls
+        document.addEventListener('keydown', (e) => {
+            if (isGameOver) return;
+            if (e.key === 'ArrowLeft') {
+                updateBasketPosition(basketPosition - 5);
+            } else if (e.key === 'ArrowRight') {
+                updateBasketPosition(basketPosition + 5);
+            }
+        });
+
+        // Touch controls
+        let isDragging = false;
+
+        gameArea.addEventListener('touchstart', (e) => {
+            if (isGameOver) return;
+            isDragging = true;
+            e.preventDefault();
+        });
+
+        gameArea.addEventListener('touchmove', (e) => {
+            if (isGameOver || !isDragging) return;
+            
+            const touch = e.touches[0];
+            const rect = gameArea.getBoundingClientRect();
+            const relativeX = touch.clientX - rect.left;
+            const newPosition = (relativeX / rect.width) * 100;
+            
+            updateBasketPosition(newPosition);
+            e.preventDefault();
+        });
+
+        gameArea.addEventListener('touchend', () => {
+            isDragging = false;
+        });
+
+        // Mouse controls
+        gameArea.addEventListener('mousedown', () => {
+            if (!isGameOver) isDragging = true;
+        });
+
+        gameArea.addEventListener('mousemove', (e) => {
+            if (isGameOver || !isDragging) return;
+            
+            const rect = gameArea.getBoundingClientRect();
+            const relativeX = e.clientX - rect.left;
+            const newPosition = (relativeX / rect.width) * 100;
+            
+            updateBasketPosition(newPosition);
+        });
+
+        gameArea.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+
+        function checkCollision() {
+            const basketRect = basket.getBoundingClientRect();
+            const heartRect = heart.getBoundingClientRect();
+
+            return !(basketRect.right < heartRect.left || 
+                    basketRect.left > heartRect.right || 
+                    basketRect.bottom < heartRect.top || 
+                    basketRect.top > heartRect.bottom);
+        }
 
         function updateHeart() {
             if (isGameOver || !gameStarted) return;
@@ -250,8 +523,11 @@
             heart.style.display = 'block';
             updateHeart();
         }
+            requestAnimationFrame(updateHeart);
+        }
 
-        // ... [Previous event listeners and other functions remain the same] ...
+        // Start the game
+        updateHeart();
     </script>
 </body>
 </html>
