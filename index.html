@@ -86,10 +86,18 @@
             top: 0;
         }
 
-        #score {
-            font-size: 24px;
+        #score, #lives, #level {
+            font-size: 20px;
             color: #d63384;
-            margin: 20px 0;
+            margin: 10px 0;
+        }
+
+        #stats {
+            display: flex;
+            justify-content: space-around;
+            width: 90vw;
+            max-width: 400px;
+            margin: 10px 0;
         }
 
         #instructions {
@@ -111,6 +119,32 @@
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
         }
 
+        .game-over {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            color: white;
+            z-index: 20;
+        }
+
+        .game-over button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 18px;
+            background: #d63384;
+            border: none;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
         .flower {
             position: absolute;
             font-size: 24px;
@@ -126,31 +160,77 @@
                 transform: translateY(100vh) rotate(360deg);
             }
         }
+
+        #lives span {
+            color: red;
+            font-size: 24px;
+        }
     </style>
 </head>
 <body>
     <h1>Catch the Heart 💖</h1>
+    <div id="stats">
+        <div id="score">Score: 0</div>
+        <div id="lives">Lives: <span>❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️</span></div>
+        <div id="level">Level: 1</div>
+    </div>
     <div id="game-area">
         <div id="basket"></div>
         <div id="heart">
             <div class="heart"></div>
         </div>
         <div class="celebration-text">I LOVE YOU HON</div>
+        <div class="game-over">
+            <h2>Game Over!</h2>
+            <p>Final Score: <span class="final-score">0</span></p>
+            <button onclick="restartGame()">Play Again</button>
+        </div>
     </div>
-    <p id="score">Score: 0</p>
     <p id="instructions">Use arrow keys or touch/drag to move the basket</p>
 
     <script>
         const basket = document.getElementById('basket');
         const heart = document.getElementById('heart');
         const scoreDisplay = document.getElementById('score');
+        const livesDisplay = document.getElementById('lives').querySelector('span');
+        const levelDisplay = document.getElementById('level');
         const gameArea = document.getElementById('game-area');
         const celebrationText = document.querySelector('.celebration-text');
+        const gameOverScreen = document.querySelector('.game-over');
         
         let score = 0;
+        let lives = 10;
+        let level = 1;
         let basketPosition = 50;
         let heartPosition = { x: 50, y: 0 };
         let gameSpeed = 2;
+        let isGameOver = false;
+
+        function updateLives() {
+            livesDisplay.textContent = '❤️'.repeat(lives);
+        }
+
+        function gameOver() {
+            isGameOver = true;
+            gameOverScreen.style.display = 'flex';
+            gameOverScreen.querySelector('.final-score').textContent = score;
+        }
+
+        function restartGame() {
+            score = 0;
+            lives = 10;
+            level = 1;
+            gameSpeed = 2;
+            isGameOver = false;
+            heartPosition = { x: 50, y: 0 };
+            basketPosition = 50;
+            updateLives();
+            scoreDisplay.textContent = `Score: ${score}`;
+            levelDisplay.textContent = `Level: ${level}`;
+            gameOverScreen.style.display = 'none';
+            heart.style.display = 'block';
+            updateHeart();
+        }
 
         function createFlower() {
             const flowers = ['🌸', '🌺', '🌹', '🌷', '💐', '🌻'];
@@ -160,7 +240,6 @@
             flower.style.left = Math.random() * 100 + '%';
             document.body.appendChild(flower);
             
-            // Remove flower after animation
             setTimeout(() => {
                 flower.remove();
             }, 3000);
@@ -169,14 +248,12 @@
         function celebrate() {
             celebrationText.style.display = 'block';
             
-            // Create flowers
             for (let i = 0; i < 30; i++) {
                 setTimeout(() => {
                     createFlower();
                 }, i * 100);
             }
 
-            // Hide celebration text after 3 seconds
             setTimeout(() => {
                 celebrationText.style.display = 'none';
             }, 3000);
@@ -189,6 +266,7 @@
 
         // Keyboard controls
         document.addEventListener('keydown', (e) => {
+            if (isGameOver) return;
             if (e.key === 'ArrowLeft') {
                 updateBasketPosition(basketPosition - 5);
             } else if (e.key === 'ArrowRight') {
@@ -200,12 +278,13 @@
         let isDragging = false;
 
         gameArea.addEventListener('touchstart', (e) => {
+            if (isGameOver) return;
             isDragging = true;
             e.preventDefault();
         });
 
         gameArea.addEventListener('touchmove', (e) => {
-            if (!isDragging) return;
+            if (isGameOver || !isDragging) return;
             
             const touch = e.touches[0];
             const rect = gameArea.getBoundingClientRect();
@@ -222,11 +301,11 @@
 
         // Mouse controls
         gameArea.addEventListener('mousedown', () => {
-            isDragging = true;
+            if (!isGameOver) isDragging = true;
         });
 
         gameArea.addEventListener('mousemove', (e) => {
-            if (!isDragging) return;
+            if (isGameOver || !isDragging) return;
             
             const rect = gameArea.getBoundingClientRect();
             const relativeX = e.clientX - rect.left;
@@ -250,10 +329,20 @@
         }
 
         function updateHeart() {
+            if (isGameOver) return;
+
             heartPosition.y += gameSpeed;
             
             if (heartPosition.y >= 95) {
-                // Reset heart if missed
+                // Heart missed
+                lives--;
+                updateLives();
+                
+                if (lives <= 0) {
+                    gameOver();
+                    return;
+                }
+
                 heartPosition.y = 0;
                 heartPosition.x = Math.random() * 90 + 5;
             }
@@ -267,7 +356,13 @@
                 scoreDisplay.textContent = `Score: ${score}`;
                 heartPosition.y = 0;
                 heartPosition.x = Math.random() * 90 + 5;
-                gameSpeed += 0.1; // Increase difficulty
+
+                // Check for level up
+                if (score % 50 === 0) {
+                    level++;
+                    levelDisplay.textContent = `Level: ${level}`;
+                    gameSpeed += 0.5; // Bigger speed increase at level up
+                }
 
                 // Check for celebration
                 if (score % 20 === 0) {
