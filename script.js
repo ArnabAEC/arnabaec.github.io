@@ -7,7 +7,7 @@ let basketPosition = 50; // Percentage-based position
 let heartPositionX = Math.random() * 90;
 let heartPositionY = 0;
 
-// Move the basket with keys
+// Move basket with keys
 document.addEventListener("keydown", (event) => {
   if (event.key === "ArrowLeft" && basketPosition > 5) {
     basketPosition -= 5;
@@ -26,23 +26,23 @@ document.addEventListener("touchmove", (event) => {
   basket.style.left = basketPosition + "%";
 });
 
-// Move the heart down
+// Move heart down
 function moveHeart() {
-  heartPositionY += 2; // Slower movement for mobile
+  heartPositionY += 2;
   heart.style.top = heartPositionY + "%";
   heart.style.left = heartPositionX + "%";
 
-  // Reset the heart if it falls off or is caught
+  // Reset heart if it falls off
   if (heartPositionY > 95) {
     heartPositionY = 0;
     heartPositionX = Math.random() * 90;
   }
 
-  // Check for collision
+  // Fix collision detection
   let basketLeft = basketPosition;
   let basketRight = basketPosition + 20; // Basket width in %
 
-  if (heartPositionY > 90 && heartPositionX > basketLeft && heartPositionX < basketRight) {
+  if (heartPositionY > 90 && heartPositionX + 6 > basketLeft && heartPositionX < basketRight) {
     score++;
     scoreDisplay.textContent = "Score: " + score;
     heartPositionY = 0;
