@@ -6,8 +6,10 @@ let score = 0;
 let basketPosition = 50; // Percentage-based position
 let heartPositionX = Math.random() * 90;
 let heartPositionY = 0;
+const basketWidth = 20; // Percentage width of the basket
+const heartWidth = 6; // Percentage width of the heart
 
-// Move basket with keys
+// Move the basket with arrow keys
 document.addEventListener("keydown", (event) => {
   if (event.key === "ArrowLeft" && basketPosition > 5) {
     basketPosition -= 5;
@@ -38,11 +40,13 @@ function moveHeart() {
     heartPositionX = Math.random() * 90;
   }
 
-  // Fix collision detection
+  // **Fixed Collision Detection:**
   let basketLeft = basketPosition;
-  let basketRight = basketPosition + 20; // Basket width in %
+  let basketRight = basketPosition + basketWidth;
+  let heartLeft = heartPositionX;
+  let heartRight = heartPositionX + heartWidth;
 
-  if (heartPositionY > 90 && heartPositionX + 6 > basketLeft && heartPositionX < basketRight) {
+  if (heartPositionY > 90 && heartRight > basketLeft && heartLeft < basketRight) {
     score++;
     scoreDisplay.textContent = "Score: " + score;
     heartPositionY = 0;
