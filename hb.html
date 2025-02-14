@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    .game-container {
+      display: flex;
+      gap: 20px;
+      padding: 20px;
+      font-family: sans-serif;
+    }
+
+    #gameBoard {
+      width: 800px;
+      height: 600px;
+      border: 2px solid #333;
+      position: relative;
+    }
+
+    .controls {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 600px;
+      overflow-y: auto;
+    }
+
+    .palette-container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 5px;
+    }
+
+    .palette-item {
+      width: 50px;
+      height: 50px;
+      cursor: pointer;
+      border: 2px solid #333;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .selected {
+      border: 2px solid #ff0000;
+    }
+  </style>
+  <TITLE>Create your Garden!</TITLE>
+</head>
+<body>
+  <div class="game-container">
+    <div id="gameBoard"></div>
+    <div class="controls">
+      <h3>Building Blocks</h3>
+      <div id="palette" class="palette-container">
+        <div class="palette-item" data-type="grass" style="background-color: #228B22">🌱</div>
+        <div class="palette-item" data-type="dirt" style="background-color: #8B4513">🟫</div>
+        <div class="palette-item" data-type="stone" style="background-color: #808080">⬜</div>
+        <div class="palette-item" data-type="sand" style="background-color: #F4A460">🏖️</div>
+        <div class="palette-item" data-type="wood" style="background-color: #8B4513">🪵</div>
+        <div class="palette-item" data-type="water" style="background-color: #4169E1">💧</div>
+        <div class="palette-item" data-type="lava" style="background-color: #FF4500">🌋</div>
+        <div class="palette-item" data-type="ice" style="background-color: #87CEEB">🧊</div>
+        <div class="palette-item" data-type="crystal" style="background-color: #E6E6FA">💎</div>
+        <div class="palette-item" data-type="gold" style="background-color: #FFD700">⭐</div>
+        <div class="palette-item" data-type="silver" style="background-color: #C0C0C0">🌟</div>
+        <div class="palette-item" data-type="copper" style="background-color: #B87333">🔸</div>
+        <div class="palette-item" data-type="obsidian" style="background-color: #4A4A4A">⬛</div>
+        <div class="palette-item" data-type="marble" style="background-color: #F5F5F5">⬜</div>
+        <div class="palette-item" data-type="brick" style="background-color: #B22222">🧱</div>
+        <div class="palette-item" data-type="moss" style="background-color: #90EE90">🌿</div>
+        <div class="palette-item" data-type="snow" style="background-color: #FFFAFA">❄️</div>
+        <div class="palette-item" data-type="cloud" style="background-color: #F0F8FF">☁️</div>
+        <div class="palette-item" data-type="glass" style="background-color: #E0FFFF">🪟</div>
+        <div class="palette-item" data-type="leaves" style="background-color: #228B22">🍃</div>
+        <div class="palette-item" data-type="metal" style="background-color: #708090">🔧</div>
+        <div class="palette-item" data-type="clay" style="background-color: #CD853F">🏺</div>
+        <div class="palette-item" data-type="quartz" style="background-color: #FFE4E1">💠</div>
+        <div class="palette-item" data-type="emerald" style="background-color: #50C878">💚</div>
+      </div>
+      <h3>Flowers & Plants</h3>
+      <div id="flowerPalette" class="palette-container">
+        <div class="palette-item" data-type="flower-red" data-emoji="🌹">🌹</div>
+        <div class="palette-item" data-type="flower-yellow" data-emoji="🌻">🌻</div>
+        <div class="palette-item" data-type="flower-purple" data-emoji="🌷">🌷</div>
+        <div class="palette-item" data-type="flower-white" data-emoji="🌸">🌸</div>
+        <div class="palette-item" data-type="flower-blue" data-emoji="🌺">🌺</div>
+        <div class="palette-item" data-type="mushroom" data-emoji="🍄">🍄</div>
+        <div class="palette-item" data-type="cactus" data-emoji="🌵">🌵</div>
+        <div class="palette-item" data-type="palm" data-emoji="🌴">🌴</div>
+        <div class="palette-item" data-type="pine" data-emoji="🌲">🌲</div>
+        <div class="palette-item" data-type="bamboo" data-emoji="🎋">🎋</div>
+      </div>
+      <button onclick="clearBoard()" style="margin-top: 20px;">Reset to Base Terrain</button>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script>
+    let scene, camera, renderer, raycaster, mouse;
+    let selectedType = null;
+    let blocks = new Map();
+    let flowers = new Map();
+    
+    const GRID_SIZE = 40;
+    const BASE_COLOR = 0x228B22;
+    
+    function createEmojiTexture(emoji) {
+    const canvas = document.createElement('canvas');
+    canvas.width = 128;
+    canvas.height = 128;
+    
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    ctx.font = '90px Arial';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(emoji, canvas.width/2, canvas.height/2);
+    
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.needsUpdate = true;
+    return texture;
+}
+
+    function init() {
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x87CEEB);
+      
+      const aspect = 800 / 600;
+      const d = 20;
+      camera = new THREE.OrthographicCamera(-d * aspect, d * aspect, d, -d, 1, 1000);
+      camera.position.set(20, 20, 20);
+      camera.lookAt(0, 0, 0);
+      
+      renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setSize(800, 600);
+      document.getElementById('gameBoard').appendChild(renderer.domElement);
+
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+      scene.add(ambientLight);
+
+      const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+      directionalLight.position.set(5, 5, 5);
+      scene.add(directionalLight);
+
+      raycaster = new THREE.Raycaster();
+      // Add these lines to your init() function after creating the raycaster
+document.querySelectorAll('.palette-item').forEach(item => {
+    item.addEventListener('click', () => {
+        selectedType = item.dataset.type;
+        console.log('Selected:', selectedType);  // Debug log
+        document.querySelectorAll('.palette-item').forEach(i => i.classList.remove('selected'));
+        item.classList.add('selected');
+    });
+});
+      mouse = new THREE.Vector2();
+
+      createBaseTerrain();
+
+      const gameBoard = renderer.domElement;
+      gameBoard.addEventListener('click', onMouseClick);
+      gameBoard.addEventListener('mousemove', onMouseMove);
+      gameBoard.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        removeBlock();
+      });
+
+      animate();
+    }
+
+    function getBlockColor(type) {
+      const colors = {
+        'grass': 0x228B22,
+        'dirt': 0x8B4513,
+        'stone': 0x808080,
+        'sand': 0xF4A460,
+        'wood': 0x8B4513,
+        'water': 0x4169E1,
+        'lava': 0xFF4500,
+        'ice': 0x87CEEB,
+        'crystal': 0xE6E6FA,
+        'gold': 0xFFD700,
+        'silver': 0xC0C0C0,
+        'copper': 0xB87333,
+        'obsidian': 0x4A4A4A,
+        'marble': 0xF5F5F5,
+        'brick': 0xB22222,
+        'moss': 0x90EE90,
+        'snow': 0xFFFAFA,
+        'cloud': 0xF0F8FF,
+        'glass': 0xE0FFFF,
+        'leaves': 0x228B22,
+        'metal': 0x708090,
+        'clay': 0xCD853F,
+        'quartz': 0xFFE4E1,
+        'emerald': 0x50C878
+      };
+      return colors[type] || 0x808080;
+    }
+
+    function createBaseTerrain() {
+      for (let x = -GRID_SIZE/2; x < GRID_SIZE/2; x++) {
+        for (let z = -GRID_SIZE/2; z < GRID_SIZE/2; z++) {
+          const position = new THREE.Vector3(x, -0.5, z);
+          const geometry = new THREE.BoxGeometry(1, 1, 1);
+          const material = new THREE.MeshPhongMaterial({
+            color: BASE_COLOR
+          });
+          const block = new THREE.Mesh(geometry, material);
+          block.position.copy(position);
+          scene.add(block);
+          blocks.set(`${position.x},${position.y},${position.z}`, block);
+        }
+      }
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      flowers.forEach(flower => {
+        flower.quaternion.copy(camera.quaternion);
+      });
+      renderer.render(scene, camera);
+    }
+
+    function onMouseMove(event) {
+      const rect = renderer.domElement.getBoundingClientRect();
+      mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+      mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+    }
+    function createSprite(emoji) {
+    const spriteMaterial = new THREE.SpriteMaterial({
+        map: createEmojiTexture(emoji),
+        transparent: true
+    });
+    const sprite = new THREE.Sprite(spriteMaterial);
+    sprite.scale.set(1.5, 1.5, 1.5);
+    return sprite;
+}
+
+function createBlock(type) {
+    const geometry = new THREE.BoxGeometry(1, 1, 1);
+    const material = new THREE.MeshPhongMaterial({
+        color: getBlockColor(type)
+    });
+    return new THREE.Mesh(geometry, material);
+}
+
+function onMouseClick(event) {
+    if (!selectedType) return;
+    
+    raycaster.setFromCamera(mouse, camera);
+    const intersects = raycaster.intersectObjects([...blocks.values()]);
+    
+    if (intersects.length > 0) {
+        const intersect = intersects[0];
+        const position = intersect.point.clone();
+        position.add(intersect.face.normal.multiplyScalar(0.5));
+        
+        // Round to grid
+        position.x = Math.round(position.x);
+        position.y = Math.round(position.y);
+        position.z = Math.round(position.z);
+        
+        const key = `${position.x},${position.y},${position.z}`;
+        
+        // Check if we're placing a flower
+        if (selectedType.includes('flower') || ['mushroom', 'cactus', 'palm', 'pine', 'bamboo'].includes(selectedType)) {
+            // Get the emoji
+            const paletteItem = document.querySelector(`[data-type="${selectedType}"]`);
+            console.log("Selected type:", selectedType);  // Debug log
+            console.log("Palette item:", paletteItem);    // Debug log
+            
+            if (paletteItem && paletteItem.dataset.emoji) {
+                // Create the emoji sprite
+                const spriteMaterial = new THREE.SpriteMaterial({
+                    map: createEmojiTexture(paletteItem.dataset.emoji),
+                    transparent: true
+                });
+                
+                const sprite = new THREE.Sprite(spriteMaterial);
+                sprite.scale.set(2, 2, 2);  // Make it bigger
+                sprite.position.copy(position);
+                sprite.position.y += 0.5;   // Lift it above the block
+                
+                // Remove any existing flower at this position
+                if (flowers.has(key)) {
+                    scene.remove(flowers.get(key));
+                }
+                
+                scene.add(sprite);
+                flowers.set(key, sprite);
+                console.log("Flower placed at:", position); // Debug log
+            }
+        } else {
+            // Handle regular blocks as before
+            if (blocks.has(key)) {
+                scene.remove(blocks.get(key));
+                blocks.delete(key);
+            }
+            
+            const geometry = new THREE.BoxGeometry(1, 1, 1);
+            const material = new THREE.MeshPhongMaterial({
+                color: getBlockColor(selectedType)
+            });
+            const block = new THREE.Mesh(geometry, material);
+            block.position.copy(position);
+            scene.add(block);
+            blocks.set(key, block);
+        }
+    }
+}
+    function removeBlock() {
+      raycaster.setFromCamera(mouse, camera);
+      const allObjects = [...blocks.values(), ...flowers.values()];
+      const intersects = raycaster.intersectObjects(allObjects);
+      
+      if (intersects.length > 0) {
+        const position = intersects[0].object.position;
+        if (position.y > -0.5) {
+          const key = `${position.x},${position.y},${position.z}`;
+          if (blocks.has(key)) {
+            scene.remove(blocks.get(key));
+            blocks.delete(key);
+          }
+          if (flowers.has(key)) {
+            scene.remove(flowers.get(key));
+            flowers.delete(key);
+          }
+        }
+      }
+    }
+
+    function clearBoard() {
+      blocks.forEach((block, key) => {
+        const [x, y, z] = key.split(',').map(Number);
+        if (y > -0.5) {
+          scene.remove(block);
+          blocks.delete(key);
+        }
+      });
+      flowers.forEach((flower, key) => {
+        scene.remove(flower);
+        flowers.delete(key);
+      });
+    }
+
+    document.querySelectorAll('.palette-item').forEach(item => {
+      item.addEventListener('click', () => {
+        document.querySelectorAll('.palette-item').forEach(i => i.classList.remove('selected'));
+        item.classList.add('selected');
+        selectedType = item.dataset.type;
+      });
+    });
+
+    init();
+  </script>
+</body>
+</html>
