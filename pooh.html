@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>❤️ Love Letters for My Pooh ❤️</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Montserrat:wght@300;400;600&display=swap');
+
+        body {
+            background: linear-gradient(135deg, #FFD3E0, #FF9CDA);
+            font-family: 'Montserrat', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .envelope-container {
+            perspective: 1000px;
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            padding-top: 140%;
+            margin: 0 auto;
+        }
+
+        .envelope {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transition: all 0.6s;
+            transform-style: preserve-3d;
+            cursor: pointer;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .envelope:hover {
+            transform: scale(1.05) rotateY(10deg);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+
+        .heart-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 105, 180, 0.1);
+            pointer-events: none;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.7; }
+        }
+
+        .love-meter {
+            background: linear-gradient(to right, #FF6B6B, #FF9CDA);
+            height: 20px;
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+
+        .letter-modal {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 25px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .letter-modal-content {
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .floating-content {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        /* Responsive Grid Adjustments */
+        @media (min-width: 640px) and (max-width: 1023px) {
+            .grid-cols-responsive {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .grid-cols-responsive {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 639px) {
+            .grid-cols-responsive {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+    <div class="container mx-auto flex flex-col items-center">
+        <div class="text-center mb-8 w-full max-w-md">
+            <h1 class="text-4xl font-bold text-pink-600 font-['Caveat']">Pooh's Love Adventure</h1>
+            <div class="love-meter mt-4 mx-auto" id="love-meter"></div>
+            <p class="text-pink-700 mt-2" id="love-status">Your Connection with Ducky: 0%</p>
+        </div>
+
+        <div class="grid grid-cols-responsive gap-6 w-full" id="envelopes">
+            <!-- Envelopes will be dynamically added here -->
+        </div>
+
+        <div id="letter-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
+            <div class="letter-modal w-full max-w-md p-8 rounded-lg text-center relative">
+                <button id="close-letter" class="absolute top-4 right-4 text-2xl text-pink-600">&times;</button>
+                <div id="letter-text" class="mb-4"></div>
+                <div id="letter-extras" class="letter-modal-content mt-4 max-h-96 overflow-y-auto"></div>
+                <button id="unlock-next" class="mt-4 bg-pink-500 text-white px-4 py-2 rounded-full hover:bg-pink-600">Unlock Next Letter</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const letters = {
+            miss: {
+                title: "Open When You Miss Ducky",
+                content: "Hey Pooh! Even when we're apart, I'm always thinking of you. Remember our special connection?",
+                task: "What's the first place we went together?",
+                unlockCondition: (answer) => {
+                    const validAnswers = ['Coffee Nest', 'coffee shop', 'coffee'];
+                    return validAnswers.some(validAns => 
+                        answer.toLowerCase().trim().includes(validAns.toLowerCase())
+                    );
+                },
+                extras: `
+                    <div class="floating-content">
+                        <p class="text-pink-600 text-lg mb-4">A little note from Ducky just for you, Pooh! 💖</p>
+                        <img src="pooh.png" alt="Missing you" class="mx-auto rounded-lg max-w-full">
+                    </div>
+                `
+            },
+            mad: {
+                title: "Open When You're Mad at Ducky",
+                content: "My dearest Pooh, I know I can be frustrating sometimes. I'm here to make things right.",
+                task: "Unscramble: YRRSO (Hint: What I want to say)",
+                unlockCondition: (answer) => answer.toLowerCase() === 'sorry',
+                extras: `
+                    <p class="text-lg font-bold text-pink-600">
+                        A silly joke to make you smile: Why did Ducky cross the road? To get to YOU! 🦆❤️
+                    </p>
+                `
+            },
+            smile: {
+                title: "Open When You Need a Smile",
+                content: "Hello, my beautiful Pooh! Here's something to brighten your day and chase away any clouds.",
+                task: "What always makes you smile when thinking of Ducky?",
+                unlockCondition: (answer) => {
+                    const validAnswers = ['you', 'us', 'our memories', 'our love', 'your smile', 'tune kaha', 'afreen'];
+                    return validAnswers.some(validAns => 
+                        answer.toLowerCase().trim().includes(validAns.toLowerCase())
+                    );
+                },
+                extras: `
+                    <div class="floating-content">
+                        <p class="text-pink-600 text-lg mb-4">A goofy Ducky smile just for you! 😄</p>
+                        <img src="./smile.jpg" alt="Cute smile moment" class="mx-auto rounded-full max-w-full">
+                    </div>
+                `
+            },
+            hug: {
+                title: "Open When You Need a Hug",
+                content: "My sweet Pooh, if I could, I'd wrap my arms around you and never let go.",
+                task: "What's our special way of hugging?",
+                unlockCondition: (answer) => {
+                    const validAnswers = ['tight', 'close', 'cuddle', 'warm', 'jore'];
+                    return validAnswers.some(validAns => 
+                        answer.toLowerCase().trim().includes(validAns.toLowerCase())
+                    );
+                },
+                extras: `
+                    <div class="floating-content">
+                        <p class="text-pink-600 text-lg mb-4">Virtual hug from Ducky to Pooh! 🤗</p>
+                        <img src="hug.jpg" alt="Virtual Hug" class="mx-auto rounded-lg max-w-full">
+                    </div>
+                `
+            },
+            lonely: {
+                title: "Open When You Feel Lonely",
+                content: "My dear Pooh, even when the world feels quiet, my love for you is loud and constant.",
+                task: "What keeps us connected, even when we're apart?",
+                unlockCondition: (answer) => {
+                    const validAnswers = ['love', 'heart', 'connection', 'bond', 'strength', 'us'];
+                    return validAnswers.some(validAns => 
+                        answer.toLowerCase().trim().includes(validAns.toLowerCase())
+                    );
+                },
+                extras: `
+                    <div class="text-center">
+                        <p class="text-pink-600 text-lg">
+                            Ducky's heart is always with you, Pooh. ❤️
+                        </p>
+                        <img src="/api/placeholder/400/300" alt="Connection" class="mx-auto rounded-lg max-w-full mt-4">
+                    </div>
+                `
+            },
+            surprise: {
+                title: "Surprise from Ducky!",
+                content: "A special mystery letter just for my amazing Pooh!",
+                task: "What's our secret code word?",
+                unlockCondition: (answer) => {
+                    return answer.toLowerCase() === 'love';
+                },
+                extras: `
+                    <div class="text-center">
+                        <h3 class="text-2xl text-pink-600 mb-4">🎉 Surprise Revealed! 🎉</h3>
+                        <p class="text-lg">
+                            A promise from Ducky: An unforgettable surprise when we meet again!
+                        </p>
+                        <img src="/api/placeholder/400/300" alt="Surprise" class="mx-auto rounded-lg max-w-full mt-4">
+                    </div>
+                `
+            }
+        };
+
+        let loveMeter = 0;
+        const envelopes = document.getElementById('envelopes');
+        const loveStatusElement = document.getElementById('love-status');
+        const loveMeterElement = document.getElementById('love-meter');
+
+        function updateLoveMeter() {
+            loveMeterElement.style.width = `${loveMeter}%`;
+            loveStatusElement.textContent = `Your Connection with Ducky: ${loveMeter}%`;
+        }
+
+        function createLetterElements() {
+            Object.keys(letters).forEach(letterId => {
+                const letterConfig = letters[letterId];
+                const envelopeElement = document.createElement('div');
+                envelopeElement.className = 'envelope-container';
+                envelopeElement.dataset.letter = letterId;
+                
+                envelopeElement.innerHTML = `
+                    <div class="envelope p-6 text-center relative">
+                        <div class="heart-overlay"></div>
+                        <svg class="w-24 h-24 mx-auto text-pink-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd" />
+                        </svg>
+                        <h3 class="mt-4 font-bold text-pink-600">${letterConfig.title}</h3>
+                        <span class="absolute top-2 right-2 text-sm bg-pink-100 text-pink-600 px-2 rounded-full">Locked 🔒</span>
+                    </div>
+                `;
+                
+                envelopes.appendChild(envelopeElement);
+            });
+        }
+
+        createLetterElements();
+
+        envelopes.addEventListener('click', (event) => {
+            const envelope = event.target.closest('.envelope-container');
+            if (!envelope) return;
+
+            const letterId = envelope.dataset.letter;
+            const letter = letters[letterId];
+
+            document.getElementById('letter-text').innerHTML = `
+                <h2 class="text-2xl font-bold text-pink-600 mb-4">${letter.title}</h2>
+                <p class="text-lg">${letter.content}</p>
+                <p class="mt-4 font-bold text-pink-500">${letter.task}</p>
+            `;
+
+            document.getElementById('letter-extras').innerHTML = letter.extras;
+
+            document.getElementById('letter-extras').innerHTML += `
+                <input type="text" id="unlock-input" class="w-full p-2 border rounded-lg mt-4" placeholder="Your answer...">
+            `;
+
+            const letterModal = document.getElementById('letter-modal');
+            letterModal.classList.remove('hidden');
+            letterModal.classList.add('flex');
+            
+            // Store the current letter ID on the modal element
+            letterModal.dataset.currentLetterId = letterId;
+        });
+
+        document.getElementById('close-letter').addEventListener('click', () => {
+            document.getElementById('letter-modal').classList.remove('flex');
+            document.getElementById('letter-modal').classList.add('hidden');
+        });
+
+        document.getElementById('unlock-next').addEventListener('click', () => {
+            const input = document.getElementById('unlock-input').value.trim().toLowerCase();
+            
+            // Find the active letter's ID from the modal
+            const modalElement = document.getElementById('letter-modal');
+            const currentLetterId = modalElement.dataset.currentLetterId;
+            
+            console.log("Current Letter ID:", currentLetterId);
+            console.log("Input Value:", input);
+
+            const letter = letters[currentLetterId];
+
+            if (letter.unlockCondition(input)) {
+                loveMeter += 20;
+                updateLoveMeter();
+                alert('Congratulations! You unlocked a piece of the love story! 💕');
+                document.getElementById('letter-modal').classList.remove('flex');
+                document.getElementById('letter-modal').classList.add('hidden');
+            } else {
+                alert('Oops! Try again. Pay attention to the hint! 💖');
+            }
+        });
+    </script>
+</body>
+</html>
